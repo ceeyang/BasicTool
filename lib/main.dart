@@ -61,7 +61,7 @@ class _BasicToolAppState extends State<BasicToolApp> {
         return CupertinoPageRoute<Object>(builder: (BuildContext context) {
 
           /// 路由不存在的时候,默认跳转到错误页面
-          if (!widget._page.containsKey(settings.name)) {
+          if (!basicToolPages.containsKey(settings.name)) {
             return routes.buildPage(r_bt_page_error, {key_error_route: settings.name});
           }
           
