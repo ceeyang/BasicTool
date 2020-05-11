@@ -14,7 +14,7 @@ Widget buildView(DefaultRouteErrorState state, Dispatch dispatch, ViewService vi
       child: RichText(
         text: TextSpan(
           text: '${state.route}\n该路由并未注册到路由中',
-          style: TextStyle(color: Colors.black)
+          style: TextStyle(color: Colors.red)
         )
       )
     ),
