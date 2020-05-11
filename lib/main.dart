@@ -1,4 +1,5 @@
 import 'package:basic_tools/activity/setting_page/page.dart';
+import 'package:basic_tools/default/default_route_error_page/state.dart';
 import 'package:basic_tools/global_store/state.dart';
 import 'package:basic_tools/global_store/store.dart';
 import 'package:basic_tools/activity/home_page/page.dart';
@@ -56,7 +57,15 @@ class _BasicToolAppState extends State<BasicToolApp> {
       debugShowCheckedModeBanner: false,
       home: routes.buildPage(widget._root, null),
       onGenerateRoute: (RouteSettings settings) {
+
         return CupertinoPageRoute<Object>(builder: (BuildContext context) {
+
+          /// 路由不存在的时候,默认跳转到错误页面
+          if (!widget._page.containsKey(settings.name)) {
+            return routes.buildPage(r_bt_page_error, {key_error_route: settings.name});
+          }
+          
+          /// 全局设置路由为 CupertinoPageRoute 类型, 并传递参数
           return routes.buildPage(settings.name, settings.arguments);
         });
       },
