@@ -9,19 +9,25 @@ import 'package:flutter/material.dart' hide Action;
 import 'package:flutter/services.dart';
 import 'dart:io';
 
+/// 程序主入口
 void main() => runApp(BasicToolApp(
   page: {r_bt_setting_root: SettingPage()},
 ));
 
 class BasicToolApp extends StatefulWidget {
 
+  /// 外部传入的路由
   final Map<String, Page<Object, dynamic>> _page;
+  /// 根路由
+  final String _root;
 
   BasicToolApp({
     Key key,
-    Map<String, Page<Object, dynamic>> page
+    Map<String, Page<Object, dynamic>> page,
+    String root
   }) : 
     _page = page ?? {},
+    _root = root ?? r_bt_home_root,
     super(key: key);
 
   @override
@@ -31,7 +37,7 @@ class BasicToolApp extends StatefulWidget {
 class _BasicToolAppState extends State<BasicToolApp> {
   @override
   Widget build(BuildContext context) {
-    
+
     if (Platform.isAndroid) {
       SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
       SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
@@ -48,7 +54,7 @@ class _BasicToolAppState extends State<BasicToolApp> {
     return MaterialApp(
       title: 'Basic Tools',
       debugShowCheckedModeBanner: false,
-      home: routes.buildPage(r_bt_home_root, null),
+      home: routes.buildPage(widget._root, null),
       onGenerateRoute: (RouteSettings settings) {
         return CupertinoPageRoute<Object>(builder: (BuildContext context) {
           return routes.buildPage(settings.name, settings.arguments);
