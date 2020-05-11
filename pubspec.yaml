@@ -27,9 +27,20 @@ dependencies:
   # preference
   shared_preferences: ^0.4.2
 
+  # event - bus
+  event_bus: ^1.1.0
+
   # https://github.com/alibaba/fish-redux
   # 咸鱼出品: 状态管理
   fish_redux: ^0.3.3
+
+  # toast
+  fluttertoast: ^3.0.4
+
+  # 网络请求
+  #  https://github.com/flutterchina/dio
+  dio: ^3.0.9
+
 
 dev_dependencies:
   flutter_test:

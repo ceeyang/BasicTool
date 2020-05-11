@@ -5,7 +5,6 @@ import 'package:basic_tools/activity/home_page/page.dart';
 import 'package:basic_tools/activity/setting_page/page.dart';
 import 'package:basic_tools/default/default_route_error_page/page.dart';
 import 'package:fish_redux/fish_redux.dart';
-import 'package:basic_tools/extensions/map_add_extensions.dart';
 
 /// 基础组件路由
 /// 基础组件 路由 自定义
@@ -22,6 +21,15 @@ Map<String, Page<Object, dynamic>> basicToolPages = {
 };
 
 /// 合并路由, 用于其他项目
-void insertPages(Map<String, Page<Object, dynamic>> pages) {
-  basicToolPages.add([pages]);
+void insertPages(List<Map<String, Page<Object, dynamic>>> pages) {
+  
+  pages.forEach((page) {
+    page.forEach((key,value) {
+      if (basicToolPages.containsKey(key)) {
+        throw UnsupportedError("重复的路由: $key");
+      } else {
+        basicToolPages[key] = value;
+      }
+    });
+  });
 }

@@ -1,8 +1,12 @@
-import 'package:basic_tools/activity/setting_page/page.dart';
+import 'package:basic_tools/config/app_status_holder.dart';
+import 'package:basic_tools/config/app_theme_config.dart';
+import 'package:basic_tools/config/app_constant_value.dart';
 import 'package:basic_tools/default/default_route_error_page/state.dart';
+import 'package:basic_tools/extensions/map_add_extensions.dart';
 import 'package:basic_tools/global_store/state.dart';
 import 'package:basic_tools/global_store/store.dart';
 import 'package:basic_tools/activity/home_page/page.dart';
+import 'package:basic_tools/plugin/plugin_event_bus.dart';
 import 'package:basic_tools/routes.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/cupertino.dart' hide Action;
@@ -10,25 +14,31 @@ import 'package:flutter/material.dart' hide Action;
 import 'package:flutter/services.dart';
 import 'dart:io';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 /// 程序主入口
-void main() => runApp(BasicToolApp(
-  page: {r_bt_setting_root: SettingPage()},
-));
+void main() => runApp(BasicToolApp());
 
 class BasicToolApp extends StatefulWidget {
 
-  /// 外部传入的路由
-  final Map<String, Page<Object, dynamic>> _page;
-  /// 根路由
+  /// 外部传入的路由集合, 多个项目,多个路由
+  final List<Map<String, Page<Object, dynamic>>> _pages;
+  
+  /// 根路由, 由外部项目决定
   final String _root;
+  
+  /// 外部传入的初始化方法, 用于其他项目初始化
+  final Function _initState;
 
   BasicToolApp({
     Key key,
-    Map<String, Page<Object, dynamic>> page,
-    String root
+    List<Map<String, Page<Object, dynamic>>> pages,
+    String root,
+    Function initState
   }) : 
-    _page = page ?? {},
+    _pages = pages ?? [],
     _root = root ?? r_bt_home_root,
+    _initState = initState ?? null,
     super(key: key);
 
   @override
@@ -36,6 +46,29 @@ class BasicToolApp extends StatefulWidget {
 }
 
 class _BasicToolAppState extends State<BasicToolApp> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    SharedPreferences.getInstance().then((it){
+      gCurrentThemeIndex = it.getInt(Constant.key_theme_index) ?? 0;
+    });
+
+    /// 当通知系统时,刷新一下状态(换肤)
+    eventBus.on<SystemThemeSwitch>().listen((it) {
+      setState(() {
+        /// 修改皮肤
+        gCurrentThemeIndex = it.currentThemeIndex;
+      });
+    });
+
+    /// 执行外部初始化内容
+    if (widget._initState != null) {
+      widget._initState();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -43,8 +76,9 @@ class _BasicToolAppState extends State<BasicToolApp> {
       SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
       SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
     }
-
-    insertPages(widget._page);
+    
+    /// 合并路由
+    insertPages(widget._pages);
 
     /// 采用 fish_redux 后, 程序采用 AbstractRoutes 类型的 route 作为 home 入口, 原有 gActivityRoutes 路由不可用,
     /// fish_redux 类型页面, 集成到 reduxPages 里面, 导航代码: Navigator.pushNamed(r_page_name);
@@ -56,6 +90,7 @@ class _BasicToolAppState extends State<BasicToolApp> {
       title: 'Basic Tools',
       debugShowCheckedModeBanner: false,
       home: routes.buildPage(widget._root, null),
+      theme: themes[gCurrentThemeIndex],
       onGenerateRoute: (RouteSettings settings) {
 
         return CupertinoPageRoute<Object>(builder: (BuildContext context) {
