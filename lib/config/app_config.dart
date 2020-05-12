@@ -4,9 +4,10 @@
 
 class Config {
 
-  /// 请求默认地址
-  static String _baseUrl = "http://192.168.188.116:8080";
+  static String defaultUrl = 'http://192.168.188.116:8080';
 
+  /// 请求默认地址
+  static String _baseUrl = '';
   static String get baseUrl => _baseUrl;
   void setBaseUrl(String url) => _baseUrl = url;
 }

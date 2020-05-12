@@ -13,7 +13,7 @@ class Constant {
 
   static const base_url = "http://xfyhpc.xft119.com:9005/";
 
-  static const key_app_token = 'token';
+  static const key_user_token = 'token';
 
   static const key_user_model= "user_model";
 
@@ -27,5 +27,6 @@ class Constant {
 
   /// 聊天页面,输入方式
   static const key_chat_input_type = "Constant.keyChatTextInput";
+
 
 }

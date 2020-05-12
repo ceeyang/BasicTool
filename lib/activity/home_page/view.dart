@@ -10,7 +10,7 @@ Widget buildView(HomeState state, Dispatch dispatch, ViewService viewService) {
         title: state.title,
         autoBackBtn: false,
         trailingWidget: IconButton(icon: Icon(Icons.settings), onPressed: () {
-          Navigator.pushNamed(viewService.context, r_bt_setting_root);
+          Navigator.pushNamed(viewService.context, r_basic_tools_setting_root);
         }),
       ),
       body: Center(

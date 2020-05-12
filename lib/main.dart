@@ -1,13 +1,15 @@
+import 'package:basic_tools/config/app_config.dart';
 import 'package:basic_tools/config/app_status_holder.dart';
 import 'package:basic_tools/config/app_theme_config.dart';
 import 'package:basic_tools/config/app_constant_value.dart';
 import 'package:basic_tools/default/default_route_error_page/state.dart';
-import 'package:basic_tools/extensions/map_add_extensions.dart';
 import 'package:basic_tools/global_store/state.dart';
 import 'package:basic_tools/global_store/store.dart';
 import 'package:basic_tools/activity/home_page/page.dart';
+import 'package:basic_tools/http/dio_util.dart';
 import 'package:basic_tools/plugin/plugin_event_bus.dart';
 import 'package:basic_tools/routes.dart';
+import 'package:dio/dio.dart';
 import 'package:fish_redux/fish_redux.dart';
 import 'package:flutter/cupertino.dart' hide Action;
 import 'package:flutter/material.dart' hide Action;
@@ -26,6 +28,9 @@ class BasicToolApp extends StatefulWidget {
   
   /// 根路由, 由外部项目决定
   final String _root;
+
+  /// 网络请求地址
+  final String _baseUrl;
   
   /// 外部传入的初始化方法, 用于其他项目初始化
   final Function _initState;
@@ -34,10 +39,12 @@ class BasicToolApp extends StatefulWidget {
     Key key,
     List<Map<String, Page<Object, dynamic>>> pages,
     String root,
-    Function initState
+    String baseUrl,
+    Function initState,
   }) : 
     _pages = pages ?? [],
-    _root = root ?? r_bt_home_root,
+    _root = root ?? r_basic_tools_home_root,
+    _baseUrl = baseUrl ?? Config.defaultUrl,
     _initState = initState ?? null,
     super(key: key);
 
@@ -47,12 +54,24 @@ class BasicToolApp extends StatefulWidget {
 
 class _BasicToolAppState extends State<BasicToolApp> {
 
+    /// 配置 DioUtil
+  void _dioUtilConfig(String token) {
+    BaseOptions options = DioUtil.getDefOptions();
+    options.baseUrl = widget._baseUrl;
+    Map<String, dynamic> headers = new Map();
+    headers["X-Access-Token"] = token;
+    options.headers = headers;
+    HttpConfig config = new HttpConfig(options: options);
+    DioUtil().setConfig(config);
+  }
+
   @override
   void initState() {
     super.initState();
 
     SharedPreferences.getInstance().then((it){
       gCurrentThemeIndex = it.getInt(Constant.key_theme_index) ?? 0;
+      _dioUtilConfig(it.getString(Constant.key_user_token) ?? '');
     });
 
     /// 当通知系统时,刷新一下状态(换肤)
@@ -78,12 +97,8 @@ class _BasicToolAppState extends State<BasicToolApp> {
     }
     
     /// 合并路由
-    insertPages(widget._pages);
+    mergePages(widget._pages);
 
-    /// 采用 fish_redux 后, 程序采用 AbstractRoutes 类型的 route 作为 home 入口, 原有 gActivityRoutes 路由不可用,
-    /// fish_redux 类型页面, 集成到 reduxPages 里面, 导航代码: Navigator.pushNamed(r_page_name);
-    /// 页面跳转出现 The builder for route "null" returned null.请参照上面两条内容进行修改方式
-    //final AbstractRoutes routes = PageRoutes(pages: reduxPages, visitor: vistor);
     final AbstractRoutes routes = PageRoutes(pages: basicToolPages, visitor: vistor);
 
     return MaterialApp(
@@ -97,7 +112,7 @@ class _BasicToolAppState extends State<BasicToolApp> {
 
           /// 路由不存在的时候,默认跳转到错误页面
           if (!basicToolPages.containsKey(settings.name)) {
-            return routes.buildPage(r_bt_page_error, {key_error_route: settings.name});
+            return routes.buildPage(r_basic_tools_page_error, {key_error_route: settings.name});
           }
           
           /// 全局设置路由为 CupertinoPageRoute 类型, 并传递参数
@@ -108,34 +123,6 @@ class _BasicToolAppState extends State<BasicToolApp> {
   }
 }
 
-class MyApp extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-
-    if (Platform.isAndroid) {
-      SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
-      SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-    }
-
-    /// 采用 fish_redux 后, 程序采用 AbstractRoutes 类型的 route 作为 home 入口, 原有 gActivityRoutes 路由不可用,
-    /// fish_redux 类型页面, 集成到 reduxPages 里面, 导航代码: Navigator.pushNamed(r_page_name);
-    /// 页面跳转出现 The builder for route "null" returned null.请参照上面两条内容进行修改方式
-    //final AbstractRoutes routes = PageRoutes(pages: reduxPages, visitor: vistor);
-    final AbstractRoutes routes = PageRoutes(pages: basicToolPages, visitor: vistor);
-
-    return MaterialApp(
-      title: 'Basic Tools',
-      debugShowCheckedModeBanner: false,
-      home: routes.buildPage(HomePage().toString(), null),
-      onGenerateRoute: (RouteSettings settings) {
-        return CupertinoPageRoute<Object>(builder: (BuildContext context) {
-          return routes.buildPage(settings.name, settings.arguments);
-        });
-      },
-    );
-  }
-}
 
 void vistor(String path, Page<Object, dynamic> page) {
 
