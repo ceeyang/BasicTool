@@ -12,8 +12,7 @@
     - 基础组件所有类名使用大驼峰命名法 `HomeActivity`, `ListItemComponent`
     - widget 作为单个简单视图,可以直接用 StatefulWidget 或者 StatelessWidget
     - 页面统一采用  fish_redux 方式
-    - 各个项目路由不能映射不能重复, 请注意
-    - 
+    - 各个项目路由映射不能重复, 请注意
 
 # How to use
 
