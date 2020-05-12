@@ -19,7 +19,7 @@
 1. 在 pubspec.yaml 文件中添加 依赖
 ```shell
 basic_tools
-    git: https://git.com
+    git: https://github.com/ceeyang/BasicTool.git
 ```
         
 2. 新项目主程序入口为 BasicToolApp, 类似的 main.dart 代码如下:
