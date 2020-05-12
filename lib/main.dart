@@ -5,7 +5,6 @@ import 'package:basic_tools/config/app_constant_value.dart';
 import 'package:basic_tools/default/default_route_error_page/state.dart';
 import 'package:basic_tools/global_store/state.dart';
 import 'package:basic_tools/global_store/store.dart';
-import 'package:basic_tools/activity/home_page/page.dart';
 import 'package:basic_tools/http/dio_util.dart';
 import 'package:basic_tools/plugin/plugin_event_bus.dart';
 import 'package:basic_tools/routes.dart';
