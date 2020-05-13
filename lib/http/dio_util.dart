@@ -124,7 +124,18 @@ class DioUtil {
 
   }
 
-  /// 设置用户 token
+  /// 配置 DioUtil
+  void configBaseUrlAndToken(String baseUrl,String token) {
+    BaseOptions options = DioUtil.getDefOptions();
+    options.baseUrl = baseUrl;
+    Map<String, dynamic> headers = new Map();
+    headers["X-Access-Token"] = token;
+    options.headers = headers;
+    HttpConfig config = new HttpConfig(options: options);
+    DioUtil().setConfig(config);
+  }
+
+/// 更新用户 token
   void setToken(String token) {
     Map<String, dynamic> _headers =  Map();
     _headers["X-Access-Token"] = token;
