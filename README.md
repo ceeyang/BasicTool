@@ -40,7 +40,7 @@
 ## How to use
 1. 创建新程序,此处以 project_one 为例
 2. 在新程序的 pubspec.yaml 文件中添加 依赖
-    ```bash
+    ```
     basic_tools
         git: http://192.168.188.30:8099/xiaoan_flutter_app/basic_tools.git
     ```
