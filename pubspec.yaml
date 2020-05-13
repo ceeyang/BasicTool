@@ -51,8 +51,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # 测试包
-  test: ^1.14.3
+  # # 测试包
+  # test: ^1.14.3
 
 
 # For information on the generic Dart part of this file, see the
