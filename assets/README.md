@@ -19,7 +19,7 @@
 2. 在新程序的 pubspec.yaml 文件中添加 依赖
 ```shell
 basic_tools
-    git: https://github.com/ceeyang/BasicTool.git
+    git: http://192.168.188.30:8099/xiaoan_flutter_app/basic_tools.git
 ```
         
 3. 新项目主程序入口为 BasicToolApp, 类似的 main.dart 代码如下:
