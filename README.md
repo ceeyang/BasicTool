@@ -15,40 +15,32 @@
     - 各个项目路由映射不能重复, 请注意
 
 # How to use
-
-1. 在 pubspec.yaml 文件中添加 依赖
+1. 创建新程序,此处以 project_one 为例
+2. 在新程序的 pubspec.yaml 文件中添加 依赖
 ```shell
 basic_tools
     git: https://github.com/ceeyang/BasicTool.git
 ```
         
-2. 新项目主程序入口为 BasicToolApp, 类似的 main.dart 代码如下:
+3. 新项目主程序入口为 BasicToolApp, 类似的 main.dart 代码如下:
 ```dart
+import 'package:basic_tools/basic_tools_config.dart';
 import 'package:basic_tools/main.dart';
 import 'package:flutter/material.dart';
-import 'package:fish_redux/fish_redux.dart';
-import 'package:project_one/login_page/page.dart';
-
-/// 路由
-const r_project_one_login_root = 'route_project_one_login_root';
-
-/// 当前项目路由
-final Map<String, Page<Object, dynamic>> projectOneRoutes = {
-  r_project_one_login_root: LoginPage()
-};
+import 'package:project_one/route.dart';
 
 /// 当前项目需要初始化的东西
 void projectOneInit() {
 
   /// 依赖于其他项目的初始化的时候调用
-  otherProjectInit();
+  otherProjectInitInOtherProjects();
 
   /// 本项目初始化调用
   print('BasicToolApp 初始化的时候会执行这个方法');
 }
 
-/// 其他项目初始化,引入其他项目,导入其他项目的初始化方法
-void otherProjectInit() {
+/// 其他项目初始化
+void otherProjectInitInOtherProjects() {
 
 }
 
@@ -56,17 +48,28 @@ void otherProjectInit() {
 /// 程序入口
 void main() => runApp(
   BasicToolApp(
-    config: BasicToolConfig(
-      /// pages 类型为: List<Map<String, Page<Object, dynamic>>> 多个路由,用于集成其他项目时候路由调用
-      pages: [projectOneRoutes],
-      /// app 根路由
+    config: BasicToolsConfig(
+      /// pages 类型为: List<Map<String, Page<Object, dynamic>>> 
+      /// 多个路由,用于集成其他项目时候路由调用[projectOnePage, projectTwoPage]
+      pages: [projectOnePage],
+      /// 程序根路由
       root: r_project_one_login_root,
-      /// app 同步初始化
+      /// 初始化方法
       initState: projectOneInit,
       /// 网络请求地址
-      baseUrl: 'https://www.baidu.com'
-    )
+      baseUrl: 'https://www.google.com/'
+    ),
   )
 );
+```
+4. 新项目的路由页面 routes.dart 代码如下:
+```dart
+import 'package:fish_redux/fish_redux.dart';
+import 'package:project_one/login_page/page.dart';
 
+const r_project_one_login_root = 'route_project_one_login_root';
+
+final Map<String, Page<Object, dynamic>> projectOnePage = {
+  r_project_one_login_root: LoginPage()
+};
 ```
